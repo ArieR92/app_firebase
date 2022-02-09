@@ -9,21 +9,26 @@ const ListaContactos = ()  => {
     const [contactos, cambiarContactos] = useState([]);
 
     useEffect( () => {
-        onSnapshot(
-            collection(db, 'usuarios'),
-            (snapshot) => {
-            //console.log('se ejecuto snapshot');
+        onSnapshot
+        (collection(db, 'users'),
+        (snapshot) => {
+            //console.log('se ejecuto snapshot')
             //console.log(snapshot.docs[0].data());
 
-            const arregloUsuarios = snapshot.docs.map( (documento) => {
+            const arregloUsuarios = snapshot.docs.map( (documento)=> {
                 return {...documento.data(), id: documento.id}
-
             })
-            console.log(arregloUsuarios);
+
+            cambiarContactos(arregloUsuarios);
+        },
+
+        (error) => {
+            console.log(error);
         }
 
         );
-    }, [] );
+    }, []);
+
 
 
 
