@@ -1,19 +1,61 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import db from './../firebase/firebaseConfig';
+import {doc, deleteDoc, updateDoc} from 'firebase/firestore'
 
 
 const Contacto = ({id, nombre, correo}) => {
     const [editandoTarea, CambiarEditandoTarea] = useState(false);
+    const [Nuevonombre, cambiarNuevoNombre] = useState(nombre);
+    const [Nuevocorreo, cambiarNuevoCorreo] = useState(correo);
+    const actualizarContacto = async(e) => {e.preventDefault();
+
+    try {
+
+        await updateDoc( doc(db, 'users', id), {
+            nombre: Nuevonombre,
+            correo: Nuevocorreo
+        });
+
+    }   
+    catch(error) {
+        console.log('Hubo un error al intenar actualizar el usuario')
+        console.log(error);
+    }
+    
+    
+
+    CambiarEditandoTarea(false);
+}
+
+//boton borrar
+
+const eliminarContacto = async(id) => {
+    try {
+
+        await deleteDoc( doc(db, 'users', id),);
+
+    }   
+    catch(error) {
+        console.log('Hubo un error al intenar eliminar el usuario')
+        console.log(error);
+    }
+    
+}
+
+
+
+
+
     return (
         <ContenedorContacto>
             {editandoTarea ?
-        <form action="">
+        <form action="" onSubmit={actualizarContacto}>
             <Input
                type= "text"
                name= "nombre"
-               //value={}
-               //onChange={}
+               value={Nuevonombre}
+               onChange={ (e) => {cambiarNuevoNombre(e.target.value)} }
                placeholder='nombre'
                
             /> 
@@ -21,8 +63,8 @@ const Contacto = ({id, nombre, correo}) => {
             <Input
                type= "text"
                name= "nombre"
-               //value={}
-               //onChange={}
+               value={Nuevocorreo}
+               onChange={ (e) => {cambiarNuevoNombre(e.target.value)} }
                placeholder='nombre'
                
             />
@@ -32,8 +74,8 @@ const Contacto = ({id, nombre, correo}) => {
         <>
         <Nombre>{nombre}</Nombre>
         <Correo>{correo}</Correo>
-        <Boton onClick={ ()=> {CambiarEditandoTarea(!editandoTarea)} }>Editar</Boton>
-        <Boton>Borrar</Boton>
+        <Boton onClick={ (e)=> {CambiarEditandoTarea(!editandoTarea)} }>Editar</Boton>
+        <Boton onClick={() => {eliminarContacto(id)} }>Borrar</Boton>
         </>
 
             }
